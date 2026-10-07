@@ -1,0 +1,1032 @@
+﻿@model FactoryTrafficManagement.Web.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Factory Traffic Management";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- Header -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>Factory Traffic Management</h1>
+
+            <p class="text-muted mb-0">
+                Junction A Control Dashboard
+            </p>
+        </div>
+
+        <div>
+            <span class="badge bg-primary fs-6">
+                @Model.Junction?.Mode
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- Junction Status -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Current Phase
+                    </h6>
+
+                    <h3>
+                        @Model.Junction?.CurrentPhase
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Controller
+                    </h6>
+
+                    @if (Model.Junction?.ControllerOnline == true)
+                    {
+                        <span class="badge bg-success fs-6">
+                            ONLINE
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger fs-6">
+                            OFFLINE
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Queued Vehicles
+                    </h6>
+
+                    <h3>
+                        @Model.QueuedVehicles.Count
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Last Updated
+                    </h6>
+
+                    <div>
+                        @Model.Junction?.UpdatedAt.ToLocalTime()
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Signal Status -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <strong>Signal Status</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row text-center">
+
+                <!-- NORTH -->
+
+                <div class="col-md-3">
+
+                    <h5>NORTH</h5>
+
+                    <div class="signal-light
+                        @Model.Junction?.ActualSignals.North.ToString().ToLower()">
+                    </div>
+
+                    <div class="fw-bold mt-2">
+                        Actual:
+                        @Model.Junction?.ActualSignals.North
+                    </div>
+
+                    <small class="text-muted">
+                        Desired:
+                        @Model.Junction?.DesiredSignals.North
+                    </small>
+
+                </div>
+
+
+                <!-- SOUTH -->
+
+                <div class="col-md-3">
+
+                    <h5>SOUTH</h5>
+
+                    <div class="signal-light
+                        @Model.Junction?.ActualSignals.South.ToString().ToLower()">
+                    </div>
+
+                    <div class="fw-bold mt-2">
+                        Actual:
+                        @Model.Junction?.ActualSignals.South
+                    </div>
+
+                    <small class="text-muted">
+                        Desired:
+                        @Model.Junction?.DesiredSignals.South
+                    </small>
+
+                </div>
+
+
+                <!-- EAST -->
+
+                <div class="col-md-3">
+
+                    <h5>EAST</h5>
+
+                    <div class="signal-light
+                        @Model.Junction?.ActualSignals.East.ToString().ToLower()">
+                    </div>
+
+                    <div class="fw-bold mt-2">
+                        Actual:
+                        @Model.Junction?.ActualSignals.East
+                    </div>
+
+                    <small class="text-muted">
+                        Desired:
+                        @Model.Junction?.DesiredSignals.East
+                    </small>
+
+                </div>
+
+
+                <!-- WEST -->
+
+                <div class="col-md-3">
+
+                    <h5>WEST</h5>
+
+                    <div class="signal-light
+                        @Model.Junction?.ActualSignals.West.ToString().ToLower()">
+                    </div>
+
+                    <div class="fw-bold mt-2">
+                        Actual:
+                        @Model.Junction?.ActualSignals.West
+                    </div>
+
+                    <small class="text-muted">
+                        Desired:
+                        @Model.Junction?.DesiredSignals.West
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Junction Control -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <strong>Junction Control</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <!-- Operating Mode -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Operating Mode
+                    </label>
+
+                    <select id="modeSelect"
+                            class="form-select">
+
+                        <option value="Automatic">
+                            Automatic
+                        </option>
+
+                        <option value="Manual">
+                            Manual
+                        </option>
+
+                        <option value="Emergency">
+                            Emergency
+                        </option>
+
+                        <option value="Degraded">
+                            Degraded
+                        </option>
+
+                    </select>
+
+                    <button class="btn btn-primary w-100 mt-2"
+                            onclick="changeMode()">
+
+                        Apply Mode
+
+                    </button>
+
+                </div>
+
+
+                <!-- Manual Green -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Manual Green Request
+                    </label>
+
+                    <select id="directionSelect"
+                            class="form-select">
+
+                        <option value="North">
+                            North
+                        </option>
+
+                        <option value="South">
+                            South
+                        </option>
+
+                        <option value="East">
+                            East
+                        </option>
+
+                        <option value="West">
+                            West
+                        </option>
+
+                    </select>
+
+                    <button class="btn btn-warning w-100 mt-2"
+                            onclick="requestManualGreen()">
+
+                        Request Green
+
+                    </button>
+
+                </div>
+
+
+                <!-- Controller Simulation -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Controller Simulation
+                    </label>
+
+                    <button class="btn btn-danger w-100 mb-2"
+                            onclick="setControllerOffline()">
+
+                        Simulate Failure
+
+                    </button>
+
+                    <button class="btn btn-success w-100"
+                            onclick="setControllerOnline()">
+
+                        Restore Controller
+
+                    </button>
+
+                </div>
+
+
+                <!-- Automatic Control -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Automatic Control
+                    </label>
+
+                    <button class="btn btn-dark w-100"
+                            onclick="runAutomaticTransition()">
+
+                        Run Automatic Decision
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div id="controlMessage"
+                 class="alert d-none mt-3 mb-0">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Traffic Event Simulator -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <strong>Traffic Event Simulator</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <!-- Vehicle ID -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Vehicle ID
+                    </label>
+
+                    <input type="text"
+                           id="vehicleId"
+                           class="form-control"
+                           placeholder="V-100" />
+
+                </div>
+
+
+                <!-- Direction -->
+
+                <div class="col-md-2">
+
+                    <label class="form-label">
+                        Direction
+                    </label>
+
+                    <select id="vehicleDirection"
+                            class="form-select">
+
+                        <option value="North">
+                            North
+                        </option>
+
+                        <option value="South">
+                            South
+                        </option>
+
+                        <option value="East">
+                            East
+                        </option>
+
+                        <option value="West">
+                            West
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Vehicle Type -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Vehicle Type
+                    </label>
+
+                    <select id="vehicleType"
+                            class="form-select">
+
+                        <option value="EmployeeVehicle">
+                            Employee Vehicle
+                        </option>
+
+                        <option value="Forklift">
+                            Forklift
+                        </option>
+
+                        <option value="Truck">
+                            Truck
+                        </option>
+
+                        <option value="Emergency">
+                            Emergency
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Event -->
+
+                <div class="col-md-2">
+
+                    <label class="form-label">
+                        Event
+                    </label>
+
+                    <select id="vehicleEvent"
+                            class="form-select">
+
+                        <option value="VehicleDetected">
+                            Detected
+                        </option>
+
+                        <option value="VehicleCleared">
+                            Cleared
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Send -->
+
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <button class="btn btn-primary w-100"
+                            onclick="sendTrafficEvent()">
+
+                        Send Event
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div id="trafficMessage"
+                 class="alert d-none mt-3 mb-0">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Vehicle Queue -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <strong>Vehicle Queue</strong>
+        </div>
+
+        <div class="card-body">
+
+            @if (!Model.QueuedVehicles.Any())
+            {
+                <p class="text-muted">
+                    No vehicles currently queued.
+                </p>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+
+                        <thead>
+
+                            <tr>
+                                <th>Vehicle</th>
+                                <th>Direction</th>
+                                <th>Type</th>
+                                <th>Waiting</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var vehicle in Model.QueuedVehicles)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @vehicle.VehicleId
+                                    </td>
+
+                                    <td>
+                                        @vehicle.Direction
+                                    </td>
+
+                                    <td>
+                                        @vehicle.VehicleType
+                                    </td>
+
+                                    <td>
+                                        @vehicle.WaitingSeconds.ToString("0") sec
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- Recent Activity -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <strong>Recent Activity</strong>
+        </div>
+
+        <div class="card-body">
+
+            @if (!Model.History.Any())
+            {
+                <p class="text-muted">
+                    No activity recorded yet.
+                </p>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-sm">
+
+                        <thead>
+
+                            <tr>
+                                <th>Time</th>
+                                <th>Event</th>
+                                <th>Message</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model.History.Take(20))
+                            {
+                                <tr>
+
+                                    <td>
+                                        @item.Timestamp.ToLocalTime()
+                                    </td>
+
+                                    <td>
+                                        @item.EventType
+                                    </td>
+
+                                    <td>
+                                        @item.Message
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .signal-light {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        margin: 10px auto;
+        border: 4px solid #333;
+    }
+
+        .signal-light.red {
+            background: #dc3545;
+            box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
+        }
+
+        .signal-light.yellow {
+            background: #ffc107;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.6);
+        }
+
+        .signal-light.green {
+            background: #198754;
+            box-shadow: 0 0 15px rgba(25, 135, 84, 0.6);
+        }
+
+</style>
+
+
+<script>
+
+    const junctionId = "A";
+
+
+    async function changeMode() {
+
+        const mode =
+            document.getElementById("modeSelect").value;
+
+        try {
+
+            const response = await fetch(
+                `/api/junctions/${junctionId}/mode`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        mode: mode
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            showControlMessage(
+                response.ok
+                    ? `Mode changed to ${mode}.`
+                    : data.message || "Failed to change mode.",
+                response.ok
+            );
+
+            if (response.ok) {
+                setTimeout(() => location.reload(), 500);
+            }
+
+        }
+        catch (error) {
+
+            showControlMessage(
+                "Unable to communicate with the backend.",
+                false
+            );
+
+        }
+    }
+
+
+    async function requestManualGreen() {
+
+        const direction =
+            document.getElementById("directionSelect").value;
+
+        try {
+
+            const response = await fetch(
+                `/api/junctions/${junctionId}/commands`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        commandType: "MANUAL_GREEN_REQUEST",
+                        direction: direction
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            showControlMessage(
+                response.ok
+                    ? `Manual green request accepted. Command: ${data.commandId}`
+                    : data.message || "Command failed.",
+                response.ok
+            );
+
+        }
+        catch (error) {
+
+            showControlMessage(
+                "Unable to communicate with the backend.",
+                false
+            );
+
+        }
+    }
+
+
+    async function setControllerOffline() {
+
+        try {
+
+            const response = await fetch(
+                `/api/junctions/${junctionId}/controller/offline`,
+                {
+                    method: "POST"
+                }
+            );
+
+            const data = await response.json();
+
+            showControlMessage(
+                response.ok
+                    ? "Controller failure simulated."
+                    : data.message || "Failed.",
+                response.ok
+            );
+
+            if (response.ok) {
+                setTimeout(() => location.reload(), 500);
+            }
+
+        }
+        catch (error) {
+
+            showControlMessage(
+                "Unable to communicate with the backend.",
+                false
+            );
+
+        }
+    }
+
+
+    async function setControllerOnline() {
+
+        try {
+
+            const response = await fetch(
+                `/api/junctions/${junctionId}/controller/online`,
+                {
+                    method: "POST"
+                }
+            );
+
+            const data = await response.json();
+
+            showControlMessage(
+                response.ok
+                    ? "Controller restored."
+                    : data.message || "Failed.",
+                response.ok
+            );
+
+            if (response.ok) {
+                setTimeout(() => location.reload(), 500);
+            }
+
+        }
+        catch (error) {
+
+            showControlMessage(
+                "Unable to communicate with the backend.",
+                false
+            );
+
+        }
+    }
+
+
+    async function runAutomaticTransition() {
+
+        try {
+
+            const response = await fetch(
+                `/api/junctions/${junctionId}/transition`,
+                {
+                    method: "POST"
+                }
+            );
+
+            const data = await response.json();
+
+            showControlMessage(
+                response.ok
+                    ? "Automatic transition executed."
+                    : data.message || "Transition failed.",
+                response.ok
+            );
+
+            if (response.ok) {
+                setTimeout(() => location.reload(), 700);
+            }
+
+        }
+        catch (error) {
+
+            showControlMessage(
+                "Unable to communicate with the backend.",
+                false
+            );
+
+        }
+    }
+
+
+    async function sendTrafficEvent() {
+
+        const vehicleId =
+            document.getElementById("vehicleId").value.trim();
+
+        const direction =
+            document.getElementById("vehicleDirection").value;
+
+        const vehicleType =
+            document.getElementById("vehicleType").value;
+
+        const eventType =
+            document.getElementById("vehicleEvent").value;
+
+        if (!vehicleId) {
+
+            showTrafficMessage(
+                "Vehicle ID is required.",
+                false
+            );
+
+            return;
+        }
+
+        const eventId =
+            "EVT-" +
+            Date.now() +
+            "-" +
+            Math.floor(Math.random() * 1000);
+
+        const sequenceNumber =
+            Date.now();
+
+        const request = {
+
+            eventId: eventId,
+
+            junctionId: "A",
+
+            direction: direction,
+
+            eventType: eventType,
+
+            vehicleId: vehicleId,
+
+            vehicleType: vehicleType,
+
+            sequenceNumber: sequenceNumber,
+
+            timestamp: new Date().toISOString()
+
+        };
+
+
+        try {
+
+            const response = await fetch(
+                "/api/sensor-events",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(request)
+                }
+            );
+
+            const data =
+                await response.json();
+
+
+            if (response.ok) {
+
+                showTrafficMessage(
+                    `Event processed successfully. Event ID: ${eventId}`,
+                    true
+                );
+
+                setTimeout(
+                    () => location.reload(),
+                    700
+                );
+
+            }
+            else {
+
+                showTrafficMessage(
+                    data.message ||
+                    "The traffic event was rejected.",
+                    false
+                );
+
+            }
+
+        }
+        catch (error) {
+
+            showTrafficMessage(
+                "Unable to communicate with the backend.",
+                false
+            );
+
+        }
+    }
+
+
+    function showControlMessage(
+        message,
+        success) {
+        const element =
+            document.getElementById("controlMessage");
+
+        element.textContent = message;
+
+        element.className =
+            success
+                ? "alert alert-success mt-3 mb-0"
+                : "alert alert-danger mt-3 mb-0";
+    }
+
+
+    function showTrafficMessage(
+        message,
+        success) {
+        const element =
+            document.getElementById("trafficMessage");
+
+        element.textContent = message;
+
+        element.className =
+            success
+                ? "alert alert-success mt-3 mb-0"
+                : "alert alert-danger mt-3 mb-0";
+    }
+
+    
+
+</script>

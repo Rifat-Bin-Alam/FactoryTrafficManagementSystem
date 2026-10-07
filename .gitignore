@@ -1,0 +1,12 @@
+.vs/
+.vscode/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.log
+TestResults/
+publish/
+*.db
+*.sqlite
+*.sqlite3

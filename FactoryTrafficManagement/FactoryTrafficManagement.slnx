@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="../FactoryTrafficManagement.Application/FactoryTrafficManagement.Application.csproj" />
+    <Project Path="../FactoryTrafficManagement.Domain/FactoryTrafficManagement.Domain.csproj" />
+    <Project Path="../FactoryTrafficManagement.Infrastructure/FactoryTrafficManagement.Infrastructure.csproj" />
+    <Project Path="../FactoryTrafficManagement.Web/FactoryTrafficManagement.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="../FactoryTrafficManagement.Tests/FactoryTrafficManagement.Tests.csproj" />
+  </Folder>
+  <Project Path="FactoryTrafficManagement.csproj" />
+</Solution>
